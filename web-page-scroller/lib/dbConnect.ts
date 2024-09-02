@@ -12,7 +12,10 @@ async function getConnection(): Promise<void> {
       console.log("already connected to the database");
       return;
     }
-    await mongoose.connect(process.env.MONGODB_URL as string);
+
+     // Connect to the database
+    const db = await mongoose.connect(process.env.MONGODB_URL as string);
+    connection.isConnected = db.connection.readyState; // Set the connection state
     console.log("Connected to the database!");
   } catch (error) {}
 }

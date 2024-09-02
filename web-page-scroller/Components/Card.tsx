@@ -8,7 +8,9 @@ export default function Card({
   tags,
 }: {
   newLimit: () => void;
-  isLast: number;
+  isLast: boolean;
+  text: string;
+  tags: string[];
 }) {
   /**
    * Select the Card component with useRef
@@ -24,6 +26,8 @@ export default function Card({
     const observer = new IntersectionObserver(([entry]) => {
       if (isLast && entry.isIntersecting) {
         newLimit();
+        // alert("Fetching data...");
+
         observer.unobserve(entry.target);
       }
     });
