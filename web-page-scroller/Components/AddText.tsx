@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react'
 
-const Card = ({cardRef, text, tags}) => {
+const AddText = ({cardRef, text, tags}) => {
   return (
     <div
       className=" flex flex-col items-center justify-center shadow-lg rounded-xl p-2 w-64 bg-white overflow-hidden"
@@ -13,7 +13,7 @@ const Card = ({cardRef, text, tags}) => {
         {tags}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Card;
+export default AddText

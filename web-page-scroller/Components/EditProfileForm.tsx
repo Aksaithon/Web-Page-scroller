@@ -94,7 +94,6 @@ const EditProfileForm: React.FC<Userdata> = ({
     }
   };
 
-  // Todo: 2. Define a submit handler
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // chack what changed
 

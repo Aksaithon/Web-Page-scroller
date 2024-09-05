@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Card from "@/components/Card";
+import CardObserver from "@/components/CardObserver";
 
 interface TextData {
   _id: string;
@@ -33,13 +33,11 @@ const Home = () => {
     getAllData();
   }, [pageNo]);
 
-  console.log(allTexts);
-
   return (
     <>
       <div className=" flex flex-col items-center gap-3">
         {allTexts.map((data, index) => (
-          <Card
+          <CardObserver
             key={data._id}
             text={allTexts[index].text}
             tags={allTexts[index].tags}

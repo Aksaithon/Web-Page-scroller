@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Page from "./PageDataSchema";
 
 const UserDataSchema = new mongoose.Schema(
   {
@@ -16,6 +17,11 @@ const UserDataSchema = new mongoose.Schema(
       required: false,
       unique: true,
     },
+
+    texts: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Page"
+    }]
   },
   {
     timestamps: true,
