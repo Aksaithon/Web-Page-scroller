@@ -1,9 +1,13 @@
 "use client";
 import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+
+// TODO: API is getting called again and again. Fix it!
 
 const SaveUserToDatabase = () => {
   const { user, isLoaded } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     const saveUser = async () => {
@@ -16,10 +20,17 @@ const SaveUserToDatabase = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: user.primaryEmailAddress.emailAddress,
+            email: user.primaryEmailAddress.emailAddress ,
             name: `${user.fullName}`,
           }),
         });
+
+        const thisUser = await response.json();
+        if (thisUser.isNewUser) {
+          router.replace(
+            `/create-profile?userId=${thisUser.userId}&userFullName=${user.fullName}`
+          );
+        }
 
         if (!response.ok) {
           console.error("Failed to save user:", await response.json());

@@ -1,3 +1,4 @@
+import SideBar from "@/components/SideBar";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
@@ -10,15 +11,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <div className=" flex flex-col  ">
-          {children}
-          <div className=" fixed top-[600px] ">
-            <Link href={"/dashboard"}>(Root) layout</Link>
-          </div>
-        </div>
-      </body>
-    </html>
+    <div className=" flex flex-col  ">
+      {children}
+      <div className=" fixed top-[600px] ">
+        <SideBar />
+      </div>
+    </div>
   );
 }

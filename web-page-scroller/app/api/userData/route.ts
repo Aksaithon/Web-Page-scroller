@@ -6,30 +6,26 @@ export async function POST(req: Request, res: NextResponse) {
   try {
     await getConnection();
 
-    const { email, name } = await req.json();
+    const { email, name, username } = await req.json();
 
     const userExists = await Users.findOne({ email });
 
     if (userExists) {
       return NextResponse.json(
-        { message: "user already exists" },
-        { status: 400 }
+        { isNewUser: false },
+        { status: 200 }
       );
     }
 
-    // Create a new user and save
+    if (!userExists) {
+      // Create a new user and save
 
-    const newUser = new Users({ email, name });
-    await newUser.save();
+      const newUser = new Users({ email, name, username });
+      const savedNewUser = await newUser.save();
 
-    return NextResponse.json(
-      { message: "User created successfully" },
-      { status: 201 }
-    );
+      return NextResponse.json({userId: savedNewUser._id, isNewUser: true});
+    }
   } catch (error) {
-    return NextResponse.json(
-      { message: "Error creating user" },
-      { status: 500 }
-    );
+    return NextResponse.json({ isNewUser: false }, { status: 500 });
   }
 }

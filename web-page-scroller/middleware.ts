@@ -1,7 +1,11 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
+// TODO: always add new api routes!
+// TODO: remove all sensitive routes after WP is done!
 const isPublicRoute = createRouteMatcher([
   "/",
+  "/api/checkUserName(.*)",
+  "/api/formData(.*)",
   "/api/userData(.*)",
   "/api/appData(.*)", // api endpoint
   "/sign-in(.*)",
