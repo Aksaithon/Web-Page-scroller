@@ -17,9 +17,12 @@ const Home = () => {
 
   const getAllData = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/appData?page=${pageNo}`, {
-        cache: "no-cache",
-      });
+      const res = await fetch(
+        `http://localhost:3000/api/appData?page=${pageNo}`,
+        {
+          cache: "no-cache",
+        }
+      );
 
       const texts = await res.json();
 

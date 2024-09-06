@@ -2,25 +2,18 @@
 import Card from "@/components/Card";
 import EditProfileForm from "@/components/EditProfileForm";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@clerk/nextjs";
+import { SignOutButton, useUser } from "@clerk/nextjs";
 import React, { useEffect, useRef, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import CardObserver from "@/components/CardObserver";
 
 interface myUser {
   id: string;
@@ -31,6 +24,15 @@ interface myUser {
 
 interface myUserData {
   user: myUser;
+}
+
+interface TextData {
+  _id: string;
+  text: string;
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 const Dashboard = () => {
@@ -44,11 +46,17 @@ const Dashboard = () => {
   const [text, setText] = useState<string>("");
   const [tags, setTags] = useState<string>();
 
+  const [usersAllTexts, setAllTexts] = useState<TextData[]>([]);
+  const [pageNo, setPageNo] = useState(1);
+  const [isAddingText, setIsAddingText] = useState<boolean | null>(null);
+  const [textSubmitted, setTextSubmitted] = useState<boolean | null>(null);
+
+  const router = useRouter();
+
   const formSchema = z.object({
     text: z
       .string()
-      .min(8, { message: "Username must be at least 8 characters." })
-      .max(25),
+      .min(8, { message: "Username must be at least 8 characters." }),
     tags: z.string(),
   });
 
@@ -56,39 +64,39 @@ const Dashboard = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       text: "",
-      tags: "[]",
+      tags: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-
+    setIsAddingText(true);
 
     const res = await fetch(`http://localhost:3000/api/appData`, {
-      method: 'POST',
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId: thisUser?.user.id,  // Pass the logged-in user's ID
+        userId: thisUser?.user.id, // Pass the logged-in user's DB ID
         text: values.text,
-        tags: values.tags.split(","),  // Split tags by commas into an array
+        tags: values.tags.split(","), // Split tags by commas into an array
       }),
-    })
+    });
 
     if (res.ok) {
-      alert("Text data added successfully!");
-      setText("");  // Reset form after submission
+      setIsAddingText(false);
+      setTextSubmitted(true);
+      setText(""); // Reset form after submission
       setTags("");
-      setAddText(false)
-
-    }else{
-      alert("Failed to add text data.");
+      setAddText(false);
+    } else {
+      setTextSubmitted(false);
     }
 
     location.reload();
-
   }
 
+  // get current user data
   useEffect(() => {
     const getUserData = async () => {
       const id = user?.primaryEmailAddress?.emailAddress;
@@ -115,85 +123,142 @@ const Dashboard = () => {
     }
   }, [user, isLoaded]);
 
+  //  get current user's all text posts from the database
+  useEffect(() => {
+    const getUserAllTexts = async () => {
+      const res = await fetch(
+        `http://localhost:3000/api/userData?userId=${thisUser?.user.id}&page=${pageNo}`,
+        {
+          cache: "no-cache",
+        }
+      );
+
+      const data = await res.json();
+
+      console.log(data, thisUser?.user.id);
+
+      setAllTexts((prev) => [...prev, ...data]);
+    };
+
+    if (user && isLoaded && thisUser) {
+      getUserAllTexts();
+    }
+  }, [pageNo, thisUser]);
+
   return (
     <>
-      <div>Dashboard(profile) -&gt; analytics</div>
+      <div className=" bg-slate-100 flex flex-col gap-3 justify-center items-center scrollbar-thin " >
+        <p>id = {thisUser?.user.id}</p>
+        <p>email = {thisUser?.user.email}</p>
+        <p>name = {thisUser?.user.name}</p>
+        <p>username = {thisUser?.user.username}</p>
 
-      <p>id = {thisUser?.user.id}</p>
-      <p>email = {thisUser?.user.email}</p>
-      <p>name = {thisUser?.user.name}</p>
-      <p>username = {thisUser?.user.username}</p>
+        <div className=" flex  justify-center w-screen ">
+          <div className=" flex flex-col justify-center items-center gap-3">
+            <Button onClick={() => setShowForm(!showForm)}>Edit profile</Button>
 
-      <Button onClick={() => setShowForm(!showForm)}>Edit profile</Button>
+            {showForm && (
+              <EditProfileForm
+                id={thisUser?.user.id}
+                username={thisUser?.user.username}
+                fullname={thisUser?.user.name}
+                email={thisUser?.user.email}
+              />
+            )}
 
-      {showForm && (
-        <EditProfileForm
-          id={thisUser?.user.id}
-          username={thisUser?.user.username}
-          fullname={thisUser?.user.name}
-          email={thisUser?.user.email}
-        />
-      )}
+            <Button className="  " onClick={() => setAddText(!addText)}>
+              Add text
+            </Button>
 
-      <div className=" flex flex-col justify-center items-center" >
-        <Button className=" w-[500px] "  onClick={() => setAddText(!addText)}>Add text</Button>
+            {addText && (
+              <div className=" flex flex-col w-[500px] justify-center items-center bg-stone-200 rounded-3xl gap-2 pt-4 pb-4 ">
+                <>
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="space-y-8"
+                    >
+                      <FormField
+                        control={form.control}
+                        name="text"
+                        render={({ field }) => (
+                          <>
+                            <FormItem>
+                              <FormControl>
+                                <Input
+                                  onChange={(e) => {
+                                    field.onChange(e);
+                                    setText(e.target.value);
+                                  }}
+                                  type="text"
+                                  placeholder="Enter your text"
+                                  className=" bg-stone-300 "
+                                />
+                              </FormControl>
+                            </FormItem>
+                          </>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="tags"
+                        render={({ field }) => (
+                          <>
+                            <FormItem>
+                              <FormControl>
+                                <Input
+                                  onChange={(e) => {
+                                    field.onChange(e);
+                                    setTags(e.target.value);
+                                  }}
+                                  type="text"
+                                  placeholder="Enter tags"
+                                  className=" bg-stone-300 "
+                                />
+                              </FormControl>
+                            </FormItem>
+                          </>
+                        )}
+                      />
+                      <Button type="submit" disabled={!thisUser?.user.id}>
+                        {isAddingText == null ? (
+                          "Submit"
+                        ) : isAddingText ? (
+                          <>
+                            <Loader2 size={20} className="animate-spin" />
+                          </>
+                        ) : textSubmitted ? (
+                          "Submitted"
+                        ) : (
+                          "Not submitted"
+                        )}
+                      </Button>
+                    </form>
+                  </Form>
 
-        {addText && (
-          <>
-            <div className=" flex flex-col w-[500px] justify-center items-center bg-stone-200 ">
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8"
-                >
-                  <FormField
-                    control={form.control}
-                    name="text"
-                    render={({ field }) => (
-                      <>
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              onChange={(e) => {
-                                field.onChange(e);
-                                setText(e.target.value);
-                              }}
-                              type="text"
-                              placeholder="Enter your text"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      </>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="tags"
-                    render={({ field }) => (
-                      <>
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              onChange={(e) => {
-                                field.onChange(e);
-                                setTags(e.target.value);
-                              }}
-                              type="text"
-                              placeholder="Enter tags"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      </>
-                    )}
-                  />
-                  <Button type="submit">Submit</Button>
-                </form>
-              </Form>
+                  <Card cardRef={cardRef} text={text} tags={tags} />
+                </>
+              </div>
+            )}
+            <SignOutButton>
+              <Button className="bg-red-200 hover:bg-red-500">Sign out</Button>
+            </SignOutButton>
+          </div>
+        </div>
 
-              <Card cardRef={cardRef} text={text} tags={tags}/>
-            </div>
-          </>
-        )}
+        <div className=" flex justify-center  ">
+          <div className="flex gap-2 flex-wrap w-11/12 ">
+            {usersAllTexts.map((data, index) => (
+              <CardObserver
+                key={data._id}
+                text={data.text}
+                tags={data.tags}
+                newLimit={() => setPageNo(pageNo + 1)}
+                isLast={index === usersAllTexts.length - 1}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </>
   );
