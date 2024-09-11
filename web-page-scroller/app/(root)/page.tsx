@@ -15,24 +15,24 @@ const Home = () => {
   const [allTexts, setAllTexts] = useState<TextData[]>([]);
   const [pageNo, setPageNo] = useState(1);
 
-  const getAllData = async () => {
-    try {
-      const res = await fetch(
-        `http://localhost:3000/api/appData?page=${pageNo}`,
-        {
-          cache: "no-cache",
-        }
-      );
-
-      const texts = await res.json();
-
-      setAllTexts((prev) => [...prev, ...texts]);
-    } catch (error) {
-      console.log("Failed to get all data", error);
-    }
-  };
-
   useEffect(() => {
+    const getAllData = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:3000/api/appData?page=${pageNo}`,
+          {
+            cache: "no-cache",
+          }
+        );
+
+        const texts = await res.json();
+
+        setAllTexts((prev) => [...prev, ...texts]);
+      } catch (error) {
+        console.log("Failed to get all data", error);
+      }
+    };
+
     getAllData();
   }, [pageNo]);
 

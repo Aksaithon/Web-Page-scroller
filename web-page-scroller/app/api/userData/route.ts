@@ -51,7 +51,10 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
     // Check if the user exists and has any text post IDs
     if (!user || !user.texts || user.texts.length === 0) {
-      return NextResponse.json({ message: "No texts found for this user" });
+      return NextResponse.json(
+        { message: "No texts found for this user" },
+        { status: 400 }
+      );
     }
 
     // Fetch the actual text data with pagination

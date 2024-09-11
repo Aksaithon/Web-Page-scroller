@@ -11,7 +11,7 @@ const SaveUserToDatabase = () => {
 
   useEffect(() => {
     const saveUser = async () => {
-      if (!user || !isLoaded) return;
+      if (!user || !isLoaded || !user.primaryEmailAddress) return;
 
       try {
         const response = await fetch("http://localhost:3000/api/userData", {
@@ -20,7 +20,7 @@ const SaveUserToDatabase = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: user.primaryEmailAddress.emailAddress ,
+            email: user.primaryEmailAddress.emailAddress,
             name: `${user.fullName}`,
           }),
         });
@@ -43,6 +43,7 @@ const SaveUserToDatabase = () => {
     };
 
     saveUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isLoaded]);
 
   return null;

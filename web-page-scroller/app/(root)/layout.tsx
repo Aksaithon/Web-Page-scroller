@@ -13,7 +13,7 @@ export default function RootLayout({
   return (
     <div className=" flex flex-col  ">
       {children}
-      <div className=" fixed top-[600px] ">
+      <div className=" fixed top-[570px] ">
         <SideBar />
       </div>
     </div>

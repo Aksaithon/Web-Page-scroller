@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
+import { Check, CheckIcon, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Userdata {
@@ -49,6 +49,9 @@ const EditProfileForm: React.FC<Userdata> = ({
 
   const [newEmail, setNewEmail] = useState<string | null | undefined>(email);
 
+  const [isSubmitting, setIsSubmitting] = useState<boolean | null>(null);
+  const [submitted, setSubmitted] = useState<boolean>(false);
+
   const formSchema = z.object({
     username: z
       .string()
@@ -72,6 +75,8 @@ const EditProfileForm: React.FC<Userdata> = ({
 
   const handleUsername = async (username: string | null) => {
     // check username's uniqueness
+
+    if (!username) return;
 
     if (username.length >= 2) {
       setIsChecking(true);
@@ -97,26 +102,30 @@ const EditProfileForm: React.FC<Userdata> = ({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // chack what changed
 
-    const isUserNameChanged = !(username == newUsername);
-    const isFullnameChanged = !(fullname == newFullname);
-    const isEmailChanged = !(email == newEmail);
-    // then update them
+    setIsSubmitting(true);
 
-    const res = fetch(`http://localhost:3000/api/formData/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: isFullnameChanged ? newFullname : fullname,
-        username: isUserNameChanged ? newUsername : username,
-        email: isEmailChanged ? newEmail : email,
-      }),
-    });
+    setTimeout(() => {
+      const isUserNameChanged = !(username == newUsername);
+      const isFullnameChanged = !(fullname == newFullname);
+      const isEmailChanged = !(email == newEmail);
+      // then update them
 
-    location.reload();
+      const res = fetch(`http://localhost:3000/api/formData/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: isFullnameChanged ? newFullname : fullname,
+          username: isUserNameChanged ? newUsername : username,
+          email: isEmailChanged ? newEmail : email,
+        }),
+      });
 
-
+      setSubmitted(true);
+      setIsSubmitting(false);
+      location.reload();
+    }, 1300);
   }
 
   return (
@@ -212,7 +221,15 @@ const EditProfileForm: React.FC<Userdata> = ({
             )}
           />
 
-          <Button type="submit">Submit</Button>
+          <Button type="submit">
+            {isSubmitting ? (
+              <Loader2 size={20} className="animate-spin" />
+            ) : submitted ? (
+              <CheckIcon size={20} className="animate-ping" />
+            ) : (
+              "Submit"
+            )}
+          </Button>
         </form>
       </Form>
     </div>

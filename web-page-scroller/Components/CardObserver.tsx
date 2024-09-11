@@ -27,13 +27,12 @@ export default function CardObserver({
     const observer = new IntersectionObserver(([entry]) => {
       if (isLast && entry.isIntersecting) {
         newLimit();
-        // alert("Fetching data...");
-
         observer.unobserve(entry.target);
       }
     });
 
     observer.observe(cardRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLast]);
 
   return <Card cardRef={cardRef} text={text} tags={tags} />;

@@ -1,6 +1,6 @@
 import React from "react";
 
-const Card = ({cardRef, text, tags}) => {
+const Card = ({cardRef, text, tags}: {cardRef: any, text: string, tags: string[] | string | undefined}) => {
   return (
     <div
       className=" flex flex-col items-center justify-center shadow-lg rounded-xl p-2 w-[272.75px] bg-white overflow-hidden"

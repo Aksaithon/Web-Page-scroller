@@ -32,6 +32,9 @@ const SignUpForm = ({
   );
   const [username, setUsername] = useState<string | null>(null);
   const [fullName, setFullName] = useState<string | null>(null);
+
+  const [isSubmitting, setIsSubmitting] = useState<boolean | null>(null);
+
   const router = useRouter();
 
   const formSchema = z.object({
@@ -49,6 +52,8 @@ const SignUpForm = ({
 
   const handleUsername = async (username: string | null) => {
     // check username's uniqueness
+
+    if (!username) return;
 
     if (username.length >= 2) {
       setIsChecking(true);
@@ -86,6 +91,7 @@ const SignUpForm = ({
     // ✅ This will be type-safe and validated.
 
     if (userNameAvailable) {
+      setIsSubmitting(true);
       const res = await fetch(`http://localhost:3000/api/formData/${id}`, {
         method: "PUT",
         headers: {
@@ -101,6 +107,7 @@ const SignUpForm = ({
             }),
       });
 
+      setIsSubmitting(false);
       console.log(values);
 
       router.push("/dashboard");
@@ -181,7 +188,13 @@ const SignUpForm = ({
               )}
             />
           ) : null}
-          <Button type="submit">Submit</Button>
+          <Button type="submit">
+            {isSubmitting ? (
+              <Loader2 size={20} className="animate-spin" />
+            ) : (
+              "Submit"
+            )}
+          </Button>
         </form>
       </Form>
     </div>

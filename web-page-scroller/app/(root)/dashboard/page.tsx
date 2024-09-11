@@ -11,7 +11,14 @@ import { z } from "zod";
 
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
+import {
+  CheckCircle,
+  CheckCircle2Icon,
+  CheckIcon,
+  CircleCheck,
+  Loader2,
+  LucideCheck,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import CardObserver from "@/components/CardObserver";
 
@@ -71,29 +78,30 @@ const Dashboard = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsAddingText(true);
 
-    const res = await fetch(`http://localhost:3000/api/appData`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: thisUser?.user.id, // Pass the logged-in user's DB ID
-        text: values.text,
-        tags: values.tags.split(","), // Split tags by commas into an array
-      }),
-    });
+    setTimeout(async () => {
+      const res = await fetch(`http://localhost:3000/api/appData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: thisUser?.user.id, // Pass the logged-in user's DB ID
+          text: values.text,
+          tags: values.tags.split(","), // Split tags by commas into an array
+        }),
+      });
 
-    if (res.ok) {
-      setIsAddingText(false);
-      setTextSubmitted(true);
-      setText(""); // Reset form after submission
-      setTags("");
-      setAddText(false);
-    } else {
-      setTextSubmitted(false);
-    }
+      if (res.ok) {
+        setIsAddingText(false);
+        setTextSubmitted(true);
+        setText(""); // Reset form after submission
+        setTags("");
+      } else {
+        setTextSubmitted(false);
+      }
 
-    location.reload();
+      location.reload();
+    }, 1300);
   }
 
   // get current user data
@@ -135,19 +143,21 @@ const Dashboard = () => {
 
       const data = await res.json();
 
-      console.log(data, thisUser?.user.id);
+      // console.log(data.textData, thisUser?.user.id);
 
-      setAllTexts((prev) => [...prev, ...data]);
+      if (data.length > 0) {
+        setAllTexts((prev) => [...prev, ...data]);
+      }
     };
 
-    if (user && isLoaded && thisUser) {
+    if (thisUser) {
       getUserAllTexts();
     }
   }, [pageNo, thisUser]);
 
   return (
     <>
-      <div className=" bg-slate-100 flex flex-col gap-3 justify-center items-center scrollbar-thin " >
+      <div className=" bg-slate-100 flex flex-col gap-3 justify-center items-center scrollbar-thin ">
         <p>id = {thisUser?.user.id}</p>
         <p>email = {thisUser?.user.email}</p>
         <p>name = {thisUser?.user.name}</p>
@@ -171,8 +181,9 @@ const Dashboard = () => {
             </Button>
 
             {addText && (
-              <div className=" flex flex-col w-[500px] justify-center items-center bg-stone-200 rounded-3xl gap-2 pt-4 pb-4 ">
+              <div className=" flex w-[500px] justify-center bg-stone-200 rounded-3xl gap-4 p-6 ">
                 <>
+                  <Card cardRef={cardRef} text={text} tags={tags} />
                   <Form {...form}>
                     <form
                       onSubmit={form.handleSubmit(onSubmit)}
@@ -228,15 +239,13 @@ const Dashboard = () => {
                             <Loader2 size={20} className="animate-spin" />
                           </>
                         ) : textSubmitted ? (
-                          "Submitted"
+                          <CheckIcon size={20} className="animate-ping" />
                         ) : (
                           "Not submitted"
                         )}
                       </Button>
                     </form>
                   </Form>
-
-                  <Card cardRef={cardRef} text={text} tags={tags} />
                 </>
               </div>
             )}
@@ -246,8 +255,8 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className=" flex justify-center  ">
-          <div className="flex gap-2 flex-wrap w-11/12 ">
+        <div className=" flex items-end w-screen ">
+          <div className="flex gap-2 flex-wrap w-fit">
             {usersAllTexts.map((data, index) => (
               <CardObserver
                 key={data._id}
