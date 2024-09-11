@@ -61,9 +61,7 @@ const Dashboard = () => {
   const router = useRouter();
 
   const formSchema = z.object({
-    text: z
-      .string()
-      .min(8, { message: "Username must be at least 8 characters." }),
+    text: z.string(),
     tags: z.string(),
   });
 
@@ -255,8 +253,8 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className=" flex items-end w-screen ">
-          <div className="flex gap-2 flex-wrap w-fit">
+        <div className=" flex justify-center w-screen ">
+          <div className="flex gap-4 flex-wrap p-10 ">
             {usersAllTexts.map((data, index) => (
               <CardObserver
                 key={data._id}
