@@ -64,7 +64,10 @@ export async function GET(req: NextRequest, res: NextResponse) {
       .limit(limit);
 
     // Return the paginated texts data with pagination info
-    return NextResponse.json(texts);
+    return NextResponse.json({
+      postData: texts,
+      totalPosts: user.texts.length,
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

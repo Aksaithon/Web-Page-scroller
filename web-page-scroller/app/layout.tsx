@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import SaveUserToDatabase from '../lib/saveUserData_toDatabase';
+import SaveUserToDatabase from "../lib/saveUserData_toDatabase";
+import StoreProvider from "./storeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,8 +39,10 @@ export default function RootLayout({
             },
           }}
         >
-          <SaveUserToDatabase/>
-          {children}
+          <StoreProvider>
+            <SaveUserToDatabase />
+            {children}
+          </StoreProvider>
         </ClerkProvider>
       </body>
     </html>

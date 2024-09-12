@@ -22,6 +22,14 @@ import {
 import { useRouter } from "next/navigation";
 import CardObserver from "@/components/CardObserver";
 
+import { useDispatch, useSelector } from "react-redux";
+import {
+  clearUserData,
+  setUserData,
+} from "@/lib/features/addUserData/userDataSlice";
+import { AppDispatch, RootState } from "@/lib/store";
+import { addUserPosts } from "@/lib/features/addUserPosts/userPostSlice";
+
 interface myUser {
   id: string;
   email: string;
@@ -43,8 +51,6 @@ interface TextData {
 }
 
 const Dashboard = () => {
-  const [name, setName] = useState<string | null | undefined>("");
-  const [thisUser, setThisUser] = useState<myUserData>();
   const { user, isLoaded } = useUser(); // clerk
   const [showForm, setShowForm] = useState(false);
   const [addText, setAddText] = useState(false);
@@ -53,10 +59,21 @@ const Dashboard = () => {
   const [text, setText] = useState<string>("");
   const [tags, setTags] = useState<string>();
 
-  const [usersAllTexts, setAllTexts] = useState<TextData[]>([]);
   const [pageNo, setPageNo] = useState(1);
   const [isAddingText, setIsAddingText] = useState<boolean | null>(null);
   const [textSubmitted, setTextSubmitted] = useState<boolean | null>(null);
+
+  // DISPACH userData to redux-store
+  const dispatchUser = useDispatch();
+
+  // DISPACH userPost data to redux-store
+  const dispatchPosts = useDispatch<AppDispatch>();
+
+  // RETRIEVE userData from redux-store
+  const getUserData_from_store = useSelector((state: RootState) => state.user);
+
+  // RETRIEVE userPosts from redux-store
+  const getUserPosts = useSelector((state: RootState) => state.userPosts.posts);
 
   const router = useRouter();
 
@@ -83,7 +100,7 @@ const Dashboard = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: thisUser?.user.id, // Pass the logged-in user's DB ID
+          userId: getUserData_from_store.id, // Pass the logged-in user's DB ID
           text: values.text,
           tags: values.tags.split(","), // Split tags by commas into an array
         }),
@@ -99,7 +116,7 @@ const Dashboard = () => {
       }
 
       location.reload();
-    }, 1300);
+    }, 1100);
   }
 
   // get current user data
@@ -113,27 +130,32 @@ const Dashboard = () => {
 
       const userData = data.userAllData;
 
-      setThisUser({
-        user: {
+      dispatchUser(
+        setUserData({
           id: userData?._id,
+          fullName: userData?.name,
           email: userData?.email,
-          name: userData?.name,
           username: userData?.username,
-        },
-      });
+        })
+      );
     };
 
     if (user && isLoaded) {
-      getUserData();
-      setName(user?.fullName);
+      if (getUserData_from_store.id) {
+        console.log("Got data from redux-store");
+      } else {
+        getUserData();
+        console.log("Got data from Database");
+      }
     }
-  }, [user, isLoaded]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, isLoaded, dispatchUser]);
 
   //  get current user's all text posts from the database
   useEffect(() => {
     const getUserAllTexts = async () => {
       const res = await fetch(
-        `http://localhost:3000/api/userData?userId=${thisUser?.user.id}&page=${pageNo}`,
+        `http://localhost:3000/api/userData?userId=${getUserData_from_store.id}&page=${pageNo}`,
         {
           cache: "no-cache",
         }
@@ -141,25 +163,32 @@ const Dashboard = () => {
 
       const data = await res.json();
 
-      // console.log(data.textData, thisUser?.user.id);
+      // console.log(data.textData, getUserData_from_store?.user.id);
 
-      if (data.length > 0) {
-        setAllTexts((prev) => [...prev, ...data]);
+      if (getUserPosts.length < data.totalPosts) {
+        if (data.postData.length > 0) {
+          dispatchPosts(addUserPosts(data.postData));
+        }
       }
     };
 
-    if (thisUser) {
-      getUserAllTexts();
+    if (getUserData_from_store) {
+      if (getUserPosts.length < pageNo * 5) {
+        getUserAllTexts();
+        console.log("Got all posts from Database");
+      } else {
+        console.log("Got all posts from redux-store", getUserPosts.length);
+      }
     }
-  }, [pageNo, thisUser]);
+  }, [dispatchPosts, getUserPosts, pageNo, getUserData_from_store]);
 
   return (
     <>
       <div className=" bg-slate-100 flex flex-col gap-3 justify-center items-center scrollbar-thin ">
-        <p>id = {thisUser?.user.id}</p>
-        <p>email = {thisUser?.user.email}</p>
-        <p>name = {thisUser?.user.name}</p>
-        <p>username = {thisUser?.user.username}</p>
+        <p>id = {getUserData_from_store.id}</p>
+        <p>email = {getUserData_from_store.email}</p>
+        <p>name = {getUserData_from_store.fullName}</p>
+        <p>username = {getUserData_from_store.username}</p>
 
         <div className=" flex  justify-center w-screen ">
           <div className=" flex flex-col justify-center items-center gap-3">
@@ -167,10 +196,10 @@ const Dashboard = () => {
 
             {showForm && (
               <EditProfileForm
-                id={thisUser?.user.id}
-                username={thisUser?.user.username}
-                fullname={thisUser?.user.name}
-                email={thisUser?.user.email}
+                id={getUserData_from_store.id}
+                username={getUserData_from_store.username}
+                fullname={getUserData_from_store.fullName}
+                email={getUserData_from_store.email}
               />
             )}
 
@@ -229,7 +258,10 @@ const Dashboard = () => {
                           </>
                         )}
                       />
-                      <Button type="submit" disabled={!thisUser?.user.id}>
+                      <Button
+                        type="submit"
+                        disabled={!getUserData_from_store.id}
+                      >
                         {isAddingText == null ? (
                           "Submit"
                         ) : isAddingText ? (
@@ -248,20 +280,25 @@ const Dashboard = () => {
               </div>
             )}
             <SignOutButton>
-              <Button className="bg-red-200 hover:bg-red-500">Sign out</Button>
+              <Button
+                onClick={() => dispatchUser(clearUserData())}
+                className="bg-red-200 hover:bg-red-500"
+              >
+                Sign out
+              </Button>
             </SignOutButton>
           </div>
         </div>
 
         <div className=" flex justify-center w-screen ">
           <div className="flex gap-4 flex-wrap p-10 ">
-            {usersAllTexts.map((data, index) => (
+            {getUserPosts.map((data, index) => (
               <CardObserver
                 key={data._id}
                 text={data.text}
                 tags={data.tags}
                 newLimit={() => setPageNo(pageNo + 1)}
-                isLast={index === usersAllTexts.length - 1}
+                isLast={index === getUserPosts.length - 1}
               />
             ))}
           </div>
