@@ -57,10 +57,11 @@ const Home = () => {
           <>
             <CardObserver
               key={data._id}
-              text={allReels[index].text}
-              tags={allReels[index].tags}
+              text={data.text}
+              tags={data.tags}
               newLimit={() => setPageNo(pageNo + 1)}
               isLast={index === allReels.length - 1}
+              username={data.username}
             />
           </>
         ))}

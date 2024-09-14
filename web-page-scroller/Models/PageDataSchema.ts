@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const PageDataSchema = new mongoose.Schema(
   {
+    username: {
+      type: String,
+      required: true,
+    },
     text: {
       type: String,
       required: true,

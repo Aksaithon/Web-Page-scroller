@@ -1,5 +1,5 @@
 "use client";
-import { SignInButton, SignOutButton } from "@clerk/nextjs";
+import { SignInButton, SignOutButton, SignUpButton } from "@clerk/nextjs";
 import Link from "next/link";
 import React from "react";
 import { Button } from "./ui/button";
@@ -24,8 +24,11 @@ const SideBar = () => {
         Home
       </Link>
 
+      <SignUpButton>
+        <Button className=" bg-blue-500 ">Sign up</Button>
+      </SignUpButton>
       <SignInButton>
-        <Button className=" bg-blue-500 ">Sign in</Button>
+        <Button className=" bg-white text-blue-500">Sign in</Button>
       </SignInButton>
       <SignOutButton>
         <Button

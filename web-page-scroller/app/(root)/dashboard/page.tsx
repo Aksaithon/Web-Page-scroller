@@ -101,6 +101,7 @@ const Dashboard = () => {
         },
         body: JSON.stringify({
           userId: getUserData_from_store.id, // Pass the logged-in user's DB ID
+          username: getUserData_from_store.username,
           text: values.text,
           tags: values.tags.split(","), // Split tags by commas into an array
         }),
@@ -173,7 +174,7 @@ const Dashboard = () => {
     };
 
     if (getUserData_from_store) {
-      if (getUserPosts.length < pageNo * 5) {
+      if (getUserPosts.length < pageNo * 5 || getUserPosts.length === 0) {
         getUserAllTexts();
         console.log("Got all posts from Database");
       } else {
@@ -210,7 +211,7 @@ const Dashboard = () => {
             {addText && (
               <div className=" flex w-[500px] justify-center bg-stone-200 rounded-3xl gap-4 p-6 ">
                 <>
-                  <Card cardRef={cardRef} text={text} tags={tags} />
+                  <Card cardRef={cardRef} text={text} tags={tags} username={getUserData_from_store.username} />
                   <Form {...form}>
                     <form
                       onSubmit={form.handleSubmit(onSubmit)}
@@ -295,6 +296,7 @@ const Dashboard = () => {
             {getUserPosts.map((data, index) => (
               <CardObserver
                 key={data._id}
+                username={getUserData_from_store.username}
                 text={data.text}
                 tags={data.tags}
                 newLimit={() => setPageNo(pageNo + 1)}

@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface Reels {
   _id: string;
+  username: string;
   text: string;
   tags: string[];
   createdAt: string;

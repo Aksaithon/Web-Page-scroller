@@ -5,11 +5,13 @@ import Card from "./Card";
 export default function CardObserver({
   newLimit,
   isLast,
+  username,
   text,
   tags,
 }: {
   newLimit: () => void;
   isLast: boolean;
+  username: string;
   text: string;
   tags: string[];
 }) {
@@ -32,8 +34,8 @@ export default function CardObserver({
     });
 
     observer.observe(cardRef.current);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLast]);
 
-  return <Card cardRef={cardRef} text={text} tags={tags} />;
+  return <Card cardRef={cardRef} username={username} text={text} tags={tags} />;
 }

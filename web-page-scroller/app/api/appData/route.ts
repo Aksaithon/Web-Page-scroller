@@ -5,12 +5,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Create new TEXT data
 export async function POST(req: NextRequest, res: NextResponse) {
-  const { userId, text, tags } = await req.json();
+  const { userId, username, text, tags } = await req.json();
 
   await getConnection;
 
   try {
     const newPage = new Page({
+      username: username,
       text: text,
       tags: tags,
     });
