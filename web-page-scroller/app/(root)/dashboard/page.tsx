@@ -29,6 +29,16 @@ import {
 } from "@/lib/features/addUserData/userDataSlice";
 import { AppDispatch, RootState } from "@/lib/store";
 import { addUserPosts } from "@/lib/features/addUserPosts/userPostSlice";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 interface myUser {
   id: string;
@@ -185,33 +195,59 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className=" bg-slate-100 flex flex-col gap-3 justify-center items-center scrollbar-thin ">
+      <div className=" bg-slate-100 flex flex-col gap-3 items-center scrollbar-thin ">
         <p>id = {getUserData_from_store.id}</p>
         <p>email = {getUserData_from_store.email}</p>
         <p>name = {getUserData_from_store.fullName}</p>
         <p>username = {getUserData_from_store.username}</p>
 
-        <div className=" flex  justify-center w-screen ">
+        <div className=" flex justify-center w-full ">
           <div className=" flex flex-col justify-center items-center gap-3">
-            <Button onClick={() => setShowForm(!showForm)}>Edit profile</Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button onClick={() => setShowForm(!showForm)}>
+                  Edit profile
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Edit profile</DialogTitle>
+                  <DialogDescription>
+                    Make changes to your profile here. Click save when
+                    you&apos;re done.
+                  </DialogDescription>
+                </DialogHeader>
+                <EditProfileForm
+                  id={getUserData_from_store.id}
+                  username={getUserData_from_store.username}
+                  fullname={getUserData_from_store.fullName}
+                  email={getUserData_from_store.email}
+                />
+              </DialogContent>
+            </Dialog>
 
-            {showForm && (
-              <EditProfileForm
-                id={getUserData_from_store.id}
-                username={getUserData_from_store.username}
-                fullname={getUserData_from_store.fullName}
-                email={getUserData_from_store.email}
-              />
-            )}
-
-            <Button className="  " onClick={() => setAddText(!addText)}>
-              Add text
-            </Button>
-
-            {addText && (
-              <div className=" flex w-[500px] justify-center bg-stone-200 rounded-3xl gap-4 p-6 ">
-                <>
-                  <Card cardRef={cardRef} text={text} tags={tags} username={getUserData_from_store.username} />
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="  " onClick={() => setAddText(!addText)}>
+                  Add text
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="w-fit bg-slate-200">
+                <DialogHeader>
+                  <DialogTitle>Add new post</DialogTitle>
+                  <DialogDescription>
+                    Add new text post for your followers!
+                  </DialogDescription>
+                </DialogHeader>
+                <div className=" flex gap-2 w-fit">
+                  <Card
+                    cardRef={cardRef}
+                    text={text}
+                    tags={tags}
+                    username={getUserData_from_store.username}
+                    objectId={""}
+                    newPost={true}
+                  />
                   <Form {...form}>
                     <form
                       onSubmit={form.handleSubmit(onSubmit)}
@@ -231,7 +267,7 @@ const Dashboard = () => {
                                   }}
                                   type="text"
                                   placeholder="Enter your text"
-                                  className=" bg-stone-300 "
+                                  className="bg-slate-50 "
                                 />
                               </FormControl>
                             </FormItem>
@@ -252,7 +288,7 @@ const Dashboard = () => {
                                   }}
                                   type="text"
                                   placeholder="Enter tags"
-                                  className=" bg-stone-300 "
+                                  className=" bg-slate-50 "
                                 />
                               </FormControl>
                             </FormItem>
@@ -277,9 +313,10 @@ const Dashboard = () => {
                       </Button>
                     </form>
                   </Form>
-                </>
-              </div>
-            )}
+                </div>
+              </DialogContent>
+            </Dialog>
+
             <SignOutButton>
               <Button
                 onClick={() => dispatchUser(clearUserData())}
@@ -296,6 +333,7 @@ const Dashboard = () => {
             {getUserPosts.map((data, index) => (
               <CardObserver
                 key={data._id}
+                objectId={data._id}
                 username={getUserData_from_store.username}
                 text={data.text}
                 tags={data.tags}

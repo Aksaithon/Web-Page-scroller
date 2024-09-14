@@ -3,12 +3,14 @@ import { useEffect, useRef } from "react";
 import Card from "./Card";
 
 export default function CardObserver({
+  objectId,
   newLimit,
   isLast,
   username,
   text,
   tags,
 }: {
+  objectId: string; // Unique identifier for the Card component
   newLimit: () => void;
   isLast: boolean;
   username: string;
@@ -37,5 +39,14 @@ export default function CardObserver({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLast]);
 
-  return <Card cardRef={cardRef} username={username} text={text} tags={tags} />;
+  return (
+    <Card
+      cardRef={cardRef}
+      objectId={objectId}
+      username={username}
+      text={text}
+      tags={tags}
+      newPost={false}
+    />
+  );
 }

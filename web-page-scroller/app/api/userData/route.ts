@@ -76,3 +76,37 @@ export async function GET(req: NextRequest, res: NextResponse) {
     );
   }
 }
+
+export async function PUT(req: NextRequest) {
+ 
+  try {
+    await getConnection();
+
+    const { username, text, tags } = await req.json();
+
+    const {searchParams} = new URL(req.url);
+
+    const id = searchParams.get("id");
+
+    const updatedPost = await Page.findByIdAndUpdate(
+      id,
+      { username, text, tags },
+      { new: true }
+    );
+
+    if (!updatedPost) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(
+      { message: "Post updated successfully!", post: updatedPost },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Failed to update post", error);
+    return NextResponse.json(
+      { error: "Failed to update post" },
+      { status: 500 }
+    );
+  }
+}
