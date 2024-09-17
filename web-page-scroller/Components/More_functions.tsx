@@ -45,6 +45,7 @@ import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
 import Card from "./Card";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 export function More_functions({
   objectId,
@@ -83,8 +84,8 @@ export function More_functions({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      text: '',
-      tags: '',
+      text: "",
+      tags: "",
     },
   });
 
@@ -119,6 +120,22 @@ export function More_functions({
       location.reload();
     }, 1100);
   }
+
+  const deletePost = (): void => {
+    // find userId and postId
+    const userId = getUserData_from_store?.id;
+    const postId = objectId;
+
+    // delete post from the server
+    fetch(
+      `http://localhost:3000/api/appData?postId=${postId}&userId=${userId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    location.reload();
+  };
 
   return (
     <DropdownMenu>
@@ -224,10 +241,40 @@ export function More_functions({
               </div>
             </DialogContent>
           </Dialog>
-          <DropdownMenuItem>
-            Delete
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-          </DropdownMenuItem>
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                Delete
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DialogTrigger>
+            <DialogContent className=" flex flex-col">
+              <DialogHeader>
+                <DialogTitle>Edit post</DialogTitle>
+                <DialogDescription>
+                  Make changes to your post here. Click save when you&apos;re
+                  done.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className=" flex gap-3">
+                <DialogClose>
+                  <Button
+                    onClick={() => deletePost()}
+                    className=" bg-red-800 rounded-md px-2 py-1 "
+                  >
+                    Delete
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button className=" bg-slate-800 rounded-md px-2 py-1 ">
+                    Cancel
+                  </Button>
+                </DialogClose>
+              </div>
+            </DialogContent>
+          </Dialog>
+          <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem disabled>Support</DropdownMenuItem>

@@ -3,6 +3,8 @@ import Page from "@/Models/PageDataSchema";
 import Users from "@/Models/UserDataSchema";
 import { NextRequest, NextResponse } from "next/server";
 
+
+// adds new user if not exists already
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     await getConnection();
@@ -27,6 +29,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
     return NextResponse.json({ isNewUser: false }, { status: 500 });
   }
 }
+
+
+// gets all post data of a user
 export async function GET(req: NextRequest, res: NextResponse) {
   try {
     await getConnection();
@@ -77,6 +82,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
   }
 }
 
+// updates a user post
 export async function PUT(req: NextRequest) {
  
   try {
