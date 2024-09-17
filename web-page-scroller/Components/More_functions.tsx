@@ -53,12 +53,14 @@ export function More_functions({
   currText,
   currtags,
   username,
+  likes,
 }: {
   objectId: string;
   cardRef: any;
   currText: string;
   currtags: string[] | string | undefined;
   username: string;
+  likes: number;
 }) {
   const [text, setText] = useState<string>(currText);
   const [tags, setTags] = useState<string[] | string | undefined>(currtags);
@@ -147,134 +149,170 @@ export function More_functions({
 
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
-          <Dialog>
-            <DialogTrigger asChild>
-              <DropdownMenuItem
-                onClick={() => console.log(objectId)}
-                onSelect={(e) => e.preventDefault()}
-              >
-                Edit
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </DialogTrigger>
-            <DialogContent className="w-fit bg-slate-200">
-              <DialogHeader>
-                <DialogTitle>Edit post</DialogTitle>
-                <DialogDescription>
-                  Make changes to your post here. Click save when you&apos;re
-                  done.
-                </DialogDescription>
-              </DialogHeader>
-              <div className=" flex gap-2 w-fit">
-                <Card
-                  cardRef={cardRef}
-                  text={text}
-                  tags={tags}
-                  username={username}
-                  objectId={""}
-                  newPost={true}
-                />
-                <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-8"
+          {getUserData_from_store?.username == username && (
+            <>
+              {/* edit opetion */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <DropdownMenuItem
+                    onClick={() => console.log(objectId)}
+                    onSelect={(e) => e.preventDefault()}
                   >
-                    <FormField
-                      control={form.control}
-                      name="text"
-                      render={({ field }) => (
-                        <>
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                onChange={(e) => {
-                                  field.onChange(e);
-                                  setText(e.target.value);
-                                }}
-                                type="text"
-                                value={text}
-                                placeholder="Enter your text"
-                                className="bg-slate-50 "
-                              />
-                            </FormControl>
-                          </FormItem>
-                        </>
-                      )}
+                    Edit
+                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </DialogTrigger>
+                <DialogContent className="w-fit bg-slate-200">
+                  <DialogHeader>
+                    <DialogTitle>Edit post</DialogTitle>
+                    <DialogDescription>
+                      Make changes to your post here. Click save when
+                      you&apos;re done.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className=" flex gap-2 w-fit">
+                    <Card
+                      cardRef={cardRef}
+                      text={text}
+                      tags={tags}
+                      username={username}
+                      objectId={objectId}
+                      likes={likes}
+                      newPost={true}
                     />
-                    <FormField
-                      control={form.control}
-                      name="tags"
-                      render={({ field }) => (
-                        <>
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                onChange={(e) => {
-                                  field.onChange(e);
-                                  setTags(e.target.value);
-                                }}
-                                type="text"
-                                value={tags}
-                                placeholder="Enter tags"
-                                className=" bg-slate-50 "
-                              />
-                            </FormControl>
-                          </FormItem>
-                        </>
-                      )}
-                    />
-                    <Button type="submit" disabled={!getUserData_from_store.id}>
-                      {isEditingText == null ? (
-                        "Submit"
-                      ) : isEditingText ? (
-                        <>
-                          <Loader2 size={20} className="animate-spin" />
-                        </>
-                      ) : textEdited ? (
-                        <CheckIcon size={20} className="animate-ping" />
-                      ) : (
-                        "Not submitted"
-                      )}
-                    </Button>
-                  </form>
-                </Form>
-              </div>
-            </DialogContent>
-          </Dialog>
+                    <Form {...form}>
+                      <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-8"
+                      >
+                        <FormField
+                          control={form.control}
+                          name="text"
+                          render={({ field }) => (
+                            <>
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    onChange={(e) => {
+                                      field.onChange(e);
+                                      setText(e.target.value);
+                                    }}
+                                    type="text"
+                                    value={text}
+                                    placeholder="Enter your text"
+                                    className="bg-slate-50 "
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            </>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="tags"
+                          render={({ field }) => (
+                            <>
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    onChange={(e) => {
+                                      field.onChange(e);
+                                      setTags(e.target.value);
+                                    }}
+                                    type="text"
+                                    value={tags}
+                                    placeholder="Enter tags"
+                                    className=" bg-slate-50 "
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            </>
+                          )}
+                        />
+                        <Button
+                          type="submit"
+                          disabled={!getUserData_from_store.id}
+                        >
+                          {isEditingText == null ? (
+                            "Submit"
+                          ) : isEditingText ? (
+                            <>
+                              <Loader2 size={20} className="animate-spin" />
+                            </>
+                          ) : textEdited ? (
+                            <CheckIcon size={20} className="animate-ping" />
+                          ) : (
+                            "Not submitted"
+                          )}
+                        </Button>
+                      </form>
+                    </Form>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* delete opetion */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    Delete
+                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </DialogTrigger>
+                <DialogContent className=" flex flex-col">
+                  <DialogHeader>
+                    <DialogTitle>Edit post</DialogTitle>
+                    <DialogDescription>
+                      Make changes to your post here. Click save when
+                      you&apos;re done.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className=" flex gap-3">
+                    <DialogClose>
+                      <Button
+                        onClick={() => deletePost()}
+                        className=" bg-red-800 rounded-md px-2 py-1 "
+                      >
+                        Delete
+                      </Button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                      <Button className=" bg-slate-800 rounded-md px-2 py-1 ">
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
+
+          {/* Share option */}
           <Dialog>
             <DialogTrigger asChild>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                Delete
+                Share
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className=" flex flex-col">
               <DialogHeader>
-                <DialogTitle>Edit post</DialogTitle>
+                <DialogTitle>Share post</DialogTitle>
                 <DialogDescription>
-                  Make changes to your post here. Click save when you&apos;re
-                  done.
+                  Share your post with someone who appreciates you!!
                 </DialogDescription>
               </DialogHeader>
 
               <div className=" flex gap-3">
-                <DialogClose>
-                  <Button
-                    onClick={() => deletePost()}
-                    className=" bg-red-800 rounded-md px-2 py-1 "
-                  >
-                    Delete
-                  </Button>
-                </DialogClose>
                 <DialogClose asChild>
                   <Button className=" bg-slate-800 rounded-md px-2 py-1 ">
-                    Cancel
+                    Share
                   </Button>
                 </DialogClose>
               </div>
             </DialogContent>
           </Dialog>
-          <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem disabled>Support</DropdownMenuItem>

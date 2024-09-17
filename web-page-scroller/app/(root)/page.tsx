@@ -56,9 +56,11 @@ const Home = () => {
         {allReels.map((data, index) => (
           <>
             <CardObserver
+              objectId={data._id}
               key={data._id}
               text={data.text}
               tags={data.tags}
+              likes={data.likes}
               newLimit={() => setPageNo(pageNo + 1)}
               isLast={index === allReels.length - 1}
               username={data.username}

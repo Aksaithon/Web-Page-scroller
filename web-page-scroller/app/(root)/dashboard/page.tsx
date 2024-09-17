@@ -245,6 +245,7 @@ const Dashboard = () => {
                     text={text}
                     tags={tags}
                     username={getUserData_from_store.username}
+                    likes={0}
                     objectId={""}
                     newPost={true}
                   />
@@ -337,6 +338,7 @@ const Dashboard = () => {
                 username={getUserData_from_store.username}
                 text={data.text}
                 tags={data.tags}
+                likes={data.likes}
                 newLimit={() => setPageNo(pageNo + 1)}
                 isLast={index === getUserPosts.length - 1}
               />

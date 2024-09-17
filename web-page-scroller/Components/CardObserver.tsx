@@ -9,6 +9,7 @@ export default function CardObserver({
   username,
   text,
   tags,
+  likes
 }: {
   objectId: string; // Unique identifier for the Card component
   newLimit: () => void;
@@ -16,6 +17,7 @@ export default function CardObserver({
   username: string;
   text: string;
   tags: string[];
+  likes: number;
 }) {
   /**
    * Select the Card component with useRef
@@ -46,6 +48,7 @@ export default function CardObserver({
       username={username}
       text={text}
       tags={tags}
+      likes={likes}
       newPost={false}
     />
   );

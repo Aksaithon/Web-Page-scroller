@@ -4,10 +4,8 @@ interface Reels {
   _id: string;
   username: string;
   text: string;
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
+  tags: string[] | string | undefined;
+  likes: number;
 }
 
 interface ReelPostState {
@@ -40,10 +38,25 @@ const reelPostSlice = createSlice({
     clearAllReels: (state) => {
       state.reels = [];
     },
+
+    // action to update an existing reel
+    updateReel: (state, action: PayloadAction<Reels>) => {
+      const updatedReel = action.payload;
+      const index = state.reels.findIndex(
+        (reel) => reel._id === updatedReel._id
+      );
+
+      if (index !== -1) {
+        state.reels[index] = {
+          ...state.reels[index],
+          ...updatedReel, // Merge the updated fields with the existing reel
+        };
+      }
+    },
   },
 });
 
 //  export actions and reducers
 
-export const { setAllReels, addNewReel, clearAllReels } = reelPostSlice.actions;
+export const { setAllReels, addNewReel, clearAllReels, updateReel } = reelPostSlice.actions;
 export default reelPostSlice.reducer;
