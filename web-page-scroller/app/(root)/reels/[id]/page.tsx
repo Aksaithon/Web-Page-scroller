@@ -4,6 +4,7 @@ import {
   addNewReel,
   setAllReels,
 } from "@/lib/features/addReelPosts/reelPostSlice";
+import { isDataLeft } from "@/lib/features/dataLeft/dataLeftSlice";
 import { updatePageNo } from "@/lib/features/pageNo/pageNoSlice";
 import { updateIndex } from "@/lib/features/reelIndex/reelIndexSlice";
 import { AppDispatch, RootState } from "@/lib/store";
@@ -19,9 +20,7 @@ const Reel = ({ params }: any) => {
   const reels = useSelector((state: RootState) => state.allReels.reels);
   const pageNo = useSelector((state: RootState) => state.pageNo.page);
   const reelIndex = useSelector((state: RootState) => state.reelIndex.index);
-
-  const [isFetching, setIsFetching] = useState(false); // Flag to prevent duplicate fetches
-  const [hasMoreData, setHasMoreData] = useState(true); // Flag to handle the end of data
+  const dataLeft = useSelector((state: RootState) => state.dataLeft.dataLeft);
 
   const getAllData = async () => {
     try {
@@ -37,7 +36,13 @@ const Reel = ({ params }: any) => {
       if (reels.length === 0) {
         dispatch(setAllReels(texts));
       } else {
-        dispatch(addNewReel(texts));
+        console.log(texts);
+        if (texts.length > 0) {
+          dispatch(addNewReel(texts));
+        } else {
+          console.log("no data available");
+          dispatch(isDataLeft(false));
+        }
       }
     } catch (error) {
       console.log("Failed to get all data", error);
@@ -60,6 +65,7 @@ const Reel = ({ params }: any) => {
       dispatch(updateIndex(0));
     } else {
       dispatch(updateIndex(reelIndex - 1));
+      dispatch(isDataLeft(true))
     }
   };
 
@@ -70,9 +76,11 @@ const Reel = ({ params }: any) => {
           prev reel
         </Link>
       )}
-      <Link onClick={nextReel} href={`/reels/${reels[reelIndex + 1]?._id}`}>
-        next reel
-      </Link>
+      {dataLeft && (
+        <Link onClick={nextReel} href={`/reels/${reels[reelIndex + 1]?._id}`}>
+          next reel
+        </Link>
+      )}
       {id}
 
       <Card

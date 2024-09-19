@@ -4,6 +4,7 @@ import userPostReducer from "./features/addUserPosts/userPostSlice";
 import reelsReducer from "./features/addReelPosts/reelPostSlice";
 import reelIndexReducer from "./features/reelIndex/reelIndexSlice"
 import pageNoReducer from "./features/pageNo/pageNoSlice"
+import dataLeftReducer from "./features/dataLeft/dataLeftSlice"
 
 
 export const makeStore = () => {
@@ -14,6 +15,7 @@ export const makeStore = () => {
       allReels: reelsReducer,
       reelIndex: reelIndexReducer,
       pageNo: pageNoReducer,
+      dataLeft: dataLeftReducer,
     },
   });
 };
