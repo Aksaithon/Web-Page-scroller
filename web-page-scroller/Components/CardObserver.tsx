@@ -9,14 +9,14 @@ export default function CardObserver({
   username,
   text,
   tags,
-  likes
+  likes,
 }: {
   objectId: string; // Unique identifier for the Card component
   newLimit: () => void;
   isLast: boolean;
   username: string;
   text: string;
-  tags: string[];
+  tags: string | string[] | undefined;
   likes: number;
 }) {
   /**

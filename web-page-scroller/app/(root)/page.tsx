@@ -7,6 +7,8 @@ import {
   addNewReel,
   setAllReels,
 } from "@/lib/features/addReelPosts/reelPostSlice";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface TextData {
   _id: string;
@@ -34,6 +36,9 @@ const Home = () => {
           }
         );
 
+        console.log('home pages fetches data 😮');
+        
+
         const texts = await res.json();
 
         if (allReels.length === 0) {
@@ -52,6 +57,12 @@ const Home = () => {
 
   return (
     <>
+      <Link
+        href={`/reels/${allReels[0]?._id}`}
+        className=" p-3 text-center bg-slate-600 text-white"
+      >
+        navigate
+      </Link>
       <div className=" flex flex-col items-center gap-3">
         {allReels.map((data, index) => (
           <>
