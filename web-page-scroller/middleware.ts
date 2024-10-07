@@ -4,6 +4,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 // TODO: remove all sensitive routes after WP is done!
 const isPublicRoute = createRouteMatcher([
   "/",
+  "/reels(.*)",
   "/api/likesData(.*)",
   "/api/checkUserName(.*)",
   "/api/formData(.*)",

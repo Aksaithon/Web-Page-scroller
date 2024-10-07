@@ -36,9 +36,6 @@ const Home = () => {
           }
         );
 
-        console.log('home pages fetches data 😮');
-        
-
         const texts = await res.json();
 
         if (allReels.length === 0) {
@@ -55,32 +52,9 @@ const Home = () => {
     }
   }, [allReels.length, dispatchReels, pageNo]);
 
-  return (
-    <>
-      <Link
-        href={`/reels/${allReels[0]?._id}`}
-        className=" p-3 text-center bg-slate-600 text-white"
-      >
-        navigate
-      </Link>
-      <div className=" flex flex-col items-center gap-3">
-        {allReels.map((data, index) => (
-          <>
-            <CardObserver
-              objectId={data._id}
-              key={data._id}
-              text={data.text}
-              tags={data.tags}
-              likes={data.likes}
-              newLimit={() => setPageNo(pageNo + 1)}
-              isLast={index === allReels.length - 1}
-              username={data.username}
-            />
-          </>
-        ))}
-      </div>
-    </>
-  );
+  const router = useRouter();
+  allReels && router.replace(`/reels/${allReels[0]?._id}`);
+
 };
 
 export default Home;

@@ -21,7 +21,7 @@ const SideBar = () => {
         className=" bg-slate-950 text-slate-200  p-2 rounded-md items-center justify-center "
         href={"/"}
       >
-        Home
+        Reels
       </Link>
 
       <SignUpButton>
