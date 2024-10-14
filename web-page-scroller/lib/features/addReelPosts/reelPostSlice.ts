@@ -14,7 +14,29 @@ interface ReelPostState {
 
 // define initial states for reel array
 const initialState: ReelPostState = {
-  reels: [],
+  reels: [
+    // {
+    //   _id: "1",
+    //   username: "user1",
+    //   text: "test-text1",
+    //   tags: "test-tags1",
+    //   likes: 1,
+    // },
+    // {
+    //   _id: "2",
+    //   username: "user2",
+    //   text: "test-text2",
+    //   tags: "test-tags2",
+    //   likes: 2,
+    // },
+    // {
+    //   _id: "3",
+    //   username: "user3",
+    //   text: "test-text3",
+    //   tags: "test-tags3",
+    //   likes: 3,
+    // },
+  ],
 };
 
 // create reel post slice
@@ -58,5 +80,6 @@ const reelPostSlice = createSlice({
 
 //  export actions and reducers
 
-export const { setAllReels, addNewReel, clearAllReels, updateReel } = reelPostSlice.actions;
+export const { setAllReels, addNewReel, clearAllReels, updateReel } =
+  reelPostSlice.actions;
 export default reelPostSlice.reducer;

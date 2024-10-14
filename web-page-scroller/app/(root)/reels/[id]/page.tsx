@@ -88,6 +88,8 @@ const Reel = ({ params }: any) => {
         dispatch(updateIndex(reelIndex - 1));
         dispatch(isDataLeft(true));
       }
+      2;
+
       router.push(`/reels/${reels[reelIndex - 1]?._id}`);
       setAnimating(false);
     }, 700);
@@ -104,14 +106,14 @@ const Reel = ({ params }: any) => {
       )}
 
       <div
-        className={`flex flex-col gap-3 ${
+        className={`flex flex-col ${
           reelIndex > 0 ? "translate-y-0" : "translate-y-1/3"
         }   `}
       >
         {/*2nd prev card */}
         {reelIndex > 0 && (
           <div
-            className={` transition-transform duration-700 ease-in-out ${
+            className={` p-3  transition-transform duration-700 ease-in-out ${
               nextBtn ? " -translate-y-full" : prevBtn ? "translate-y-full" : ""
             }`}
           >
@@ -178,7 +180,7 @@ const Reel = ({ params }: any) => {
         {/* prev card */}
         {reelIndex > 0 && (
           <div
-            className={` transition-transform duration-700 ease-in-out ${
+            className={`p-3 transition-transform duration-700 ease-in-out ${
               nextBtn ? " -translate-y-full" : prevBtn ? "translate-y-full" : ""
             }`}
           >
@@ -245,7 +247,7 @@ const Reel = ({ params }: any) => {
 
         {/* current card */}
         <div
-          className={` transition-transform duration-700 ease-in-out ${
+          className={`p-3 transition-transform duration-700 ease-in-out ${
             nextBtn ? " -translate-y-full" : prevBtn ? "translate-y-full" : ""
           }`}
         >
@@ -263,7 +265,7 @@ const Reel = ({ params }: any) => {
 
         {/* next card */}
         <div
-          className={` transition-transform duration-700 ease-in-out ${
+          className={`p-3 transition-transform duration-700 ease-in-out ${
             nextBtn ? " -translate-y-full " : prevBtn ? "translate-y-full" : ""
           } `}
         >
@@ -301,7 +303,7 @@ const Reel = ({ params }: any) => {
         {/* 2nd next card */}
         {/* {dataLeft && ( */}
         <div
-          className={` transition-transform duration-700 ease-in-out ${
+          className={`p-3 transition-transform duration-700 ease-in-out ${
             nextBtn ? " -translate-y-full " : prevBtn ? "translate-y-full" : ""
           } `}
         >
