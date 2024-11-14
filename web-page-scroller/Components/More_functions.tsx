@@ -104,8 +104,8 @@ export function More_functions({
           },
           body: JSON.stringify({
             username: username,
-            text: values.text,
-            tags: values.tags.split(","), // Split tags by commas into an array
+            text: text,
+            tags: tags, // Split tags by commas into an array
           }),
         }
       );
@@ -151,7 +151,7 @@ export function More_functions({
         <DropdownMenuGroup>
           {getUserData_from_store?.username == username && (
             <>
-              {/* edit opetion */}
+              {/* edit option */}
               <Dialog>
                 <DialogTrigger asChild>
                   <DropdownMenuItem
@@ -159,7 +159,6 @@ export function More_functions({
                     onSelect={(e) => e.preventDefault()}
                   >
                     Edit
-                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                   </DropdownMenuItem>
                 </DialogTrigger>
                 <DialogContent className="w-fit bg-slate-200">
@@ -256,15 +255,13 @@ export function More_functions({
                 <DialogTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                     Delete
-                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                   </DropdownMenuItem>
                 </DialogTrigger>
                 <DialogContent className=" flex flex-col">
                   <DialogHeader>
-                    <DialogTitle>Edit post</DialogTitle>
+                    <DialogTitle>Delete post</DialogTitle>
                     <DialogDescription>
-                      Make changes to your post here. Click save when
-                      you&apos;re done.
+                      this can&apos;t undone!
                     </DialogDescription>
                   </DialogHeader>
 
@@ -293,7 +290,6 @@ export function More_functions({
             <DialogTrigger asChild>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                 Share
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className=" flex flex-col">
@@ -316,10 +312,7 @@ export function More_functions({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem disabled>Support</DropdownMenuItem>
-        <DropdownMenuItem>
-          Log out
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-        </DropdownMenuItem>
+        <DropdownMenuItem>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

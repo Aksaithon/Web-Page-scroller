@@ -20,7 +20,8 @@ const Reel = ({ params }: any) => {
   const [animating, setAnimating] = useState(false);
   const [prevBtn, setPrevBtn] = useState(false);
 
-  const { id } = params;
+  // const { id } = React.use(params);
+
   const cardRef = useRef();
 
   const dispatch = useDispatch<AppDispatch>();

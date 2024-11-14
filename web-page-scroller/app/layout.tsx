@@ -4,6 +4,9 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import SaveUserToDatabase from "../lib/saveUserData_toDatabase";
 import StoreProvider from "./storeProvider";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar"
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,8 +43,12 @@ export default function RootLayout({
           }}
         >
           <StoreProvider>
+            <SidebarProvider defaultOpen={false} >
             <SaveUserToDatabase />
-            {children}
+              <AppSidebar/>
+              <SidebarTrigger />
+              {children}
+            </SidebarProvider>
           </StoreProvider>
         </ClerkProvider>
       </body>

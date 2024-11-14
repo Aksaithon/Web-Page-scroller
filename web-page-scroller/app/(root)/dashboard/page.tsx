@@ -9,36 +9,39 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  CheckCircle,
-  CheckCircle2Icon,
-  CheckIcon,
-  CircleCheck,
-  Loader2,
-  LucideCheck,
-} from "lucide-react";
+// import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+// import { Input } from "@/components/ui/input";
+// import {
+//   CheckCircle,
+//   CheckCircle2Icon,
+//   CheckIcon,
+//   CircleCheck,
+//   Loader2,
+//   LucideCheck,
+//   PlusIcon,
+// } from "lucide-react";
 import { useRouter } from "next/navigation";
 import CardObserver from "@/components/CardObserver";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
-  clearUserData,
+  // clearUserData,
   setUserData,
 } from "@/lib/features/addUserData/userDataSlice";
 import { AppDispatch, RootState } from "@/lib/store";
 import { addUserPosts } from "@/lib/features/addUserPosts/userPostSlice";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogDescription,
+//   DialogFooter,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogTrigger,
+// } from "@/components/ui/dialog";
+// import { Label } from "@/components/ui/label";
+// import Profile_Editor from "@/components/Profile_Editor";
+// import Post_Creator from "@/components/Post_Creator";
 
 interface myUser {
   id: string;
@@ -64,7 +67,7 @@ const Dashboard = () => {
   const { user, isLoaded } = useUser(); // clerk
   const [showForm, setShowForm] = useState(false);
   const [addText, setAddText] = useState(false);
-  const cardRef = useRef();
+  const cardRef = useRef(null);
 
   const [text, setText] = useState<string>("");
   const [tags, setTags] = useState<string>();
@@ -87,48 +90,48 @@ const Dashboard = () => {
 
   const router = useRouter();
 
-  const formSchema = z.object({
-    text: z.string(),
-    tags: z.string(),
-  });
+  // const formSchema = z.object({
+  //   text: z.string(),
+  //   tags: z.string(),
+  // });
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      text: "",
-      tags: "",
-    },
-  });
+  // const form = useForm<z.infer<typeof formSchema>>({
+  //   resolver: zodResolver(formSchema),
+  //   defaultValues: {
+  //     text: "",
+  //     tags: "",
+  //   },
+  // });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsAddingText(true);
+  // async function onSubmit(values: z.infer<typeof formSchema>) {
+  //   setIsAddingText(true);
 
-    setTimeout(async () => {
-      const res = await fetch(`http://localhost:3000/api/appData`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: getUserData_from_store.id, // Pass the logged-in user's DB ID
-          username: getUserData_from_store.username,
-          text: values.text,
-          tags: values.tags.split(","), // Split tags by commas into an array
-        }),
-      });
+  //   setTimeout(async () => {
+  //     const res = await fetch(`http://localhost:3000/api/appData`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         userId: getUserData_from_store.id, // Pass the logged-in user's DB ID
+  //         username: getUserData_from_store.username,
+  //         text: values.text,
+  //         tags: values.tags.split(","), // Split tags by commas into an array
+  //       }),
+  //     });
 
-      if (res.ok) {
-        setIsAddingText(false);
-        setTextSubmitted(true);
-        setText(""); // Reset form after submission
-        setTags("");
-      } else {
-        setTextSubmitted(false);
-      }
+  //     if (res.ok) {
+  //       setIsAddingText(false);
+  //       setTextSubmitted(true);
+  //       setText(""); // Reset form after submission
+  //       setTags("");
+  //     } else {
+  //       setTextSubmitted(false);
+  //     }
 
-      location.reload();
-    }, 1100);
-  }
+  //     location.reload();
+  //   }, 1100);
+  // }
 
   // get current user data
   useEffect(() => {
@@ -195,139 +198,19 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className=" bg-slate-100 flex flex-col gap-3 items-center scrollbar-thin ">
-        <p>id = {getUserData_from_store.id}</p>
+      <div className=" flex justify-between px-8 py-4 ">
+        <div className="bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-full px-8 py-4 h-fit flex items-center ">
+          {getUserData_from_store.username}
+        </div>
+      </div>
+
+      <div className=" bg-slate-100 flex flex-col gap-3 items-center w-screen scrollbar-thin ">
+        {/* <p>id = {getUserData_from_store.id}</p>
         <p>email = {getUserData_from_store.email}</p>
         <p>name = {getUserData_from_store.fullName}</p>
-        <p>username = {getUserData_from_store.username}</p>
+        <p>username = {getUserData_from_store.username}</p> */}
 
-        <div className=" flex justify-center w-full ">
-          <div className=" flex flex-col justify-center items-center gap-3">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button onClick={() => setShowForm(!showForm)}>
-                  Edit profile
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Edit profile</DialogTitle>
-                  <DialogDescription>
-                    Make changes to your profile here. Click save when
-                    you&apos;re done.
-                  </DialogDescription>
-                </DialogHeader>
-                <EditProfileForm
-                  id={getUserData_from_store.id}
-                  username={getUserData_from_store.username}
-                  fullname={getUserData_from_store.fullName}
-                  email={getUserData_from_store.email}
-                />
-              </DialogContent>
-            </Dialog>
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="  " onClick={() => setAddText(!addText)}>
-                  Add text
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="w-fit bg-slate-200">
-                <DialogHeader>
-                  <DialogTitle>Add new post</DialogTitle>
-                  <DialogDescription>
-                    Add new text post for your followers!
-                  </DialogDescription>
-                </DialogHeader>
-                <div className=" flex gap-2 w-fit">
-                  <Card
-                    cardRef={cardRef}
-                    text={text}
-                    tags={tags}
-                    username={getUserData_from_store.username}
-                    likes={0}
-                    objectId={""}
-                    newPost={true}
-                  />
-                  <Form {...form}>
-                    <form
-                      onSubmit={form.handleSubmit(onSubmit)}
-                      className="space-y-8"
-                    >
-                      <FormField
-                        control={form.control}
-                        name="text"
-                        render={({ field }) => (
-                          <>
-                            <FormItem>
-                              <FormControl>
-                                <Input
-                                  onChange={(e) => {
-                                    field.onChange(e);
-                                    setText(e.target.value);
-                                  }}
-                                  type="text"
-                                  placeholder="Enter your text"
-                                  className="bg-slate-50 "
-                                />
-                              </FormControl>
-                            </FormItem>
-                          </>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="tags"
-                        render={({ field }) => (
-                          <>
-                            <FormItem>
-                              <FormControl>
-                                <Input
-                                  onChange={(e) => {
-                                    field.onChange(e);
-                                    setTags(e.target.value);
-                                  }}
-                                  type="text"
-                                  placeholder="Enter tags"
-                                  className=" bg-slate-50 "
-                                />
-                              </FormControl>
-                            </FormItem>
-                          </>
-                        )}
-                      />
-                      <Button
-                        type="submit"
-                        disabled={!getUserData_from_store.id}
-                      >
-                        {isAddingText == null ? (
-                          "Submit"
-                        ) : isAddingText ? (
-                          <>
-                            <Loader2 size={20} className="animate-spin" />
-                          </>
-                        ) : textSubmitted ? (
-                          <CheckIcon size={20} className="animate-ping" />
-                        ) : (
-                          "Not submitted"
-                        )}
-                      </Button>
-                    </form>
-                  </Form>
-                </div>
-              </DialogContent>
-            </Dialog>
-
-            <SignOutButton>
-              <Button
-                onClick={() => dispatchUser(clearUserData())}
-                className="bg-red-200 hover:bg-red-500"
-              >
-                Sign out
-              </Button>
-            </SignOutButton>
-          </div>
-        </div>
 
         <div className=" flex justify-center w-screen ">
           <div className="flex gap-4 flex-wrap p-10 ">

@@ -58,6 +58,7 @@ const Home = () => {
   return (
     <>
       <Link
+        key={"navigate_to_reels"}
         href={`/reels/${allReels[0]?._id}`}
         className=" p-3 text-center bg-slate-600 text-white"
       >
@@ -65,18 +66,16 @@ const Home = () => {
       </Link>
       <div className=" flex flex-col items-center gap-3">
         {allReels.map((data, index) => (
-          <>
-            <CardObserver
-              objectId={data._id}
-              key={data._id}
-              text={data.text}
-              tags={data.tags}
-              likes={data.likes}
-              newLimit={() => setPageNo(pageNo + 1)}
-              isLast={index === allReels.length - 1}
-              username={data.username}
-            />
-          </>
+          <CardObserver
+            objectId={data._id}
+            key={data._id}
+            text={data.text}
+            tags={data.tags}
+            likes={data.likes}
+            newLimit={() => setPageNo(pageNo + 1)}
+            isLast={index === allReels.length - 1}
+            username={data.username}
+          />
         ))}
       </div>
     </>

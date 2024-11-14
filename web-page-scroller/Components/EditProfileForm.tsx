@@ -18,12 +18,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Check, CheckIcon, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import {
+  setFullName,
+  setUserName,
+} from "@/lib/features/addUserData/userDataSlice";
 
 interface Userdata {
   id: string | undefined;
   username: string | undefined;
   fullname: string | undefined;
   email: string | undefined;
+  onCloseDialog: () => void; // Define the type of onCloseDialog;
 }
 
 const EditProfileForm: React.FC<Userdata> = ({
@@ -31,6 +37,7 @@ const EditProfileForm: React.FC<Userdata> = ({
   username,
   fullname,
   email,
+  onCloseDialog,
 }) => {
   const router = useRouter();
 
@@ -51,6 +58,9 @@ const EditProfileForm: React.FC<Userdata> = ({
 
   const [isSubmitting, setIsSubmitting] = useState<boolean | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
+
+  // DISPACH userData to redux-store
+  const dispatchUser = useDispatch();
 
   const formSchema = z.object({
     username: z
@@ -110,22 +120,37 @@ const EditProfileForm: React.FC<Userdata> = ({
       const isEmailChanged = !(email == newEmail);
       // then update them
 
-      const res = fetch(`http://localhost:3000/api/formData/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: isFullnameChanged ? newFullname : fullname,
-          username: isUserNameChanged ? newUsername : username,
-          email: isEmailChanged ? newEmail : email,
-        }),
-      });
+      if (isUserNameChanged || isFullnameChanged || isEmailChanged) {
+        const res = fetch(`http://localhost:3000/api/formData/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: isFullnameChanged ? newFullname : fullname,
+            username: isUserNameChanged ? newUsername : username,
+            email: isEmailChanged ? newEmail : email,
+          }),
+        });
+      }
 
       setSubmitted(true);
       setIsSubmitting(false);
-      location.reload();
-    }, 1300);
+      dispatchUser(
+        setUserName({
+          username: newUsername as string,
+        })
+      );
+
+      dispatchUser(
+        setFullName({
+          fullName: newFullname as string,
+        })
+      );
+
+      onCloseDialog();
+      // location.reload();
+    }, 1200);
   }
 
   return (
@@ -141,8 +166,10 @@ const EditProfileForm: React.FC<Userdata> = ({
                   <FormControl>
                     <div className="flex w-full max-w-sm items-center space-x-2">
                       <Input
+                        {...field}
                         onChange={(e) => {
                           field.onChange(e);
+                          field.value = e.target.value;
                           handleUsername(e.target.value);
                         }}
                         type="text"
@@ -187,8 +214,10 @@ const EditProfileForm: React.FC<Userdata> = ({
               <FormItem>
                 <FormControl>
                   <Input
+                    {...field}
                     onChange={(e) => {
                       field.onChange(e);
+                      field.value = e.target.value;
                       setNewFullname(e.target.value);
                     }}
                     type="text"
@@ -207,8 +236,10 @@ const EditProfileForm: React.FC<Userdata> = ({
               <FormItem>
                 <FormControl>
                   <Input
+                    {...field}
                     onChange={(e) => {
                       field.onChange(e);
+                      field.value = e.target.value;
                       setNewEmail(e.target.value);
                     }}
                     type="email"

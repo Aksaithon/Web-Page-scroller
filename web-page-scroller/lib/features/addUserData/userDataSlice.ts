@@ -7,6 +7,14 @@ interface UserState {
   username: string;
 }
 
+interface usernameState {
+  username: string;
+}
+
+interface userfullNameState {
+  fullName: string;
+}
+
 // define initial state
 
 const initialState: UserState = {
@@ -29,6 +37,12 @@ const userDataSlice = createSlice({
       state.email = action.payload.email;
       state.username = action.payload.username;
     },
+    setUserName: (state, action: PayloadAction<usernameState>) => {
+      state.username = action.payload.username;
+    },
+    setFullName: (state, action: PayloadAction<userfullNameState>) => {
+      state.fullName = action.payload.fullName;
+    },
     // action to reset user data(optional)
     clearUserData: (state) => {
       state.id = "";
@@ -40,5 +54,6 @@ const userDataSlice = createSlice({
 });
 
 // export the actions and reducer
-export const { setUserData, clearUserData } = userDataSlice.actions;
+export const { setUserData, setUserName, setFullName, clearUserData } =
+  userDataSlice.actions;
 export default userDataSlice.reducer;

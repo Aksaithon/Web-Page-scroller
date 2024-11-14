@@ -121,7 +121,7 @@ const Card = ({
           )}
         </div>
       </div>
-      <div className=" flex items-center justify-center w-fit h-96 p-5  leading-relaxed  relative  rounded-xl text-3xl thisText  ">
+      <div className=" flex h-96 p-5 text-left text-wrap rounded-xl text-3xl thisText  ">
         {text}
       </div>
       <div className=" flex flex-col jusitfy-start w-full rounded-b-xl p-4 p-l-2">

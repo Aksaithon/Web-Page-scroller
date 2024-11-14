@@ -2,11 +2,14 @@ import getConnection from "@/lib/dbConnect";
 import Users from "@/Models/UserDataSchema";
 import { NextRequest, NextResponse } from "next/server";
 
+
+type Params = Promise<{id: string}>
+
 export const GET = async (
   req: NextRequest,
-  { params }: { params: { id: string | null } }
+  { params }: { params: Params }
 ) => {
-  const { id } = params;
+  const { id } = await params;
   try {
     await getConnection();
 
@@ -26,9 +29,9 @@ export const GET = async (
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: any }
+  { params }: { params: Promise<{id: any}> }
 ) => {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     await getConnection();

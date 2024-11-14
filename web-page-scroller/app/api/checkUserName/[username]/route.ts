@@ -2,11 +2,14 @@ import getConnection from "@/lib/dbConnect";
 import Users from "@/Models/UserDataSchema";
 import { NextResponse } from "next/server";
 
+
+type Params = Promise<{username: string}>
+
 export async function GET(
   req: Request,
-  { params }: { params: { username: string | null } }
+  { params }: { params: Params }
 ) {
-  const { username } = params;
+  const { username } = await params;
 
   try {
     await getConnection();
